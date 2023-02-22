@@ -1,1 +1,1 @@
-
+class TransectionDB {}
