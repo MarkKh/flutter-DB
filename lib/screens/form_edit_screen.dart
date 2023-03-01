@@ -4,25 +4,41 @@ import 'package:flutter/material.dart';
 import 'package:db/providers/transaction_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:db/models/transactions.dart';
-import 'package:intl/intl.dart';
 
-class FormScreen extends StatelessWidget {
-  final formKey = GlobalKey<FormState>();
+class FormEditScreen extends StatefulWidget {
+  final Transactions data;
 
   //Controller
+
+  const FormEditScreen({Key? key, required this.data}) : super(key: key);
+
+  @override
+  State<FormEditScreen> createState() => _FormEditScreenState();
+}
+
+class _FormEditScreenState extends State<FormEditScreen> {
+  final formKey = GlobalKey<FormState>();
+
+  final idController = TextEditingController();
   final titleController = TextEditingController();
   final amountController = TextEditingController();
 
   final ButtonStyle style =
       ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
 
-  FormScreen({super.key});
+  @override
+  void initState() {
+    super.initState();
+    idController.text = widget.data.id.toString();
+    titleController.text = widget.data.title.toString();
+    amountController.text = widget.data.amount.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('แบบฟอร์มบันทึกข้อมูล'),
+          title: const Text('แบบฟอร์มแก้ไขข้อมูล'),
         ),
         body: Padding(
             padding: const EdgeInsets.all(10.0),
@@ -31,6 +47,13 @@ class FormScreen extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    TextFormField(
+                      enabled: false,
+                      style: const TextStyle(color: Colors.black54),
+                      decoration: const InputDecoration(labelText: "Item ID"),
+                      autofocus: false,
+                      controller: idController,
+                    ),
                     TextFormField(
                       decoration: const InputDecoration(labelText: "Item Name"),
                       autofocus: false,
@@ -60,6 +83,7 @@ class FormScreen extends StatelessWidget {
                         style: style,
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
+                            var id = int.parse(idController.text);
                             var title = titleController.text;
                             var amount = double.parse(amountController.text);
 
@@ -68,15 +92,15 @@ class FormScreen extends StatelessWidget {
                                 context,
                                 listen: false);
                             Transactions item = Transactions(
+                                id: id,
                                 title: title,
                                 amount: amount,
-                                date: DateFormat('yyyy-MM-dd - kk:mm:ss')
-                                    .format(DateTime.now()));
-                            provider.addTransaction(item);
+                                date: widget.data.date);
+                            provider.updateTransaction(item);
                             Navigator.pop(context);
                           }
                         },
-                        child: const Text("Add data"))
+                        child: const Text("Save data"))
                   ]),
             )));
   }
