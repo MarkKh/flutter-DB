@@ -1,7 +1,22 @@
+// ignore: file_names
 class Transactions {
+  late int? id;
   String title;
   double amount;
-  DateTime date;
+  String date;
 
-  Transactions({required this.title, required this.amount, required this.date});
+  Transactions(
+      {this.id,
+      required this.title,
+      required this.amount,
+      required this.date});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'amount': amount,
+      'date': date
+    };
+  }
 }
